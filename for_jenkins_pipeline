@@ -1,0 +1,40 @@
+pipeline {
+    agent none
+    stages {
+        stage('Stage1') {
+            agent any
+            steps {
+                echo '=======Start cloning from gitlab======='
+                sh 'git clone https://gitlab.com/andrikovalenko/test1.git /key/work/from_gitlab'
+                echo '=======End cloning from gitlab======='
+            }
+        }
+        
+        stage('Stage2') {
+            agent any
+            steps {
+                echo '=======Start cloning from github======='
+                sh 'git clone https://github.com/andrikovalenko/forJenkins.git /key/work/from_github'
+                echo '=======End cloning branch github======='
+            }
+        }
+        
+         stage('Stage3') {
+            agent any
+            steps {
+                echo '=======Start deploy site======='
+                sh 'ansible-playbook -u root /key/deploy.yaml --key-file=/keys/id_rsa'
+                echo '=======End deploy site======='
+            }
+        }
+        
+        stage('Stage4') {
+            agent any
+            steps {
+                echo '=======Start delete temp file======='
+                sh 'rm -Rf /key/work/'
+                echo '=======End delete temp file======='
+            }
+        }
+    }
+}
